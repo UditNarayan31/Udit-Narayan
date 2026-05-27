@@ -1,6 +1,297 @@
+{% doc %}
+  @prompt
+    make sizes drop-down menu list, make sizes drop-down list hover black
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-size-dropdown-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-size-dropdown__label-{{ ai_gen_id }} {
+    display: block;
+    margin-bottom: 8px;
+    font-size: {{ block.settings.label_font_size }}px;
+    color: {{ block.settings.label_color }};
+    font-weight: 500;
+  }
+
+  .ai-size-dropdown__select-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+  }
+
+  .ai-size-dropdown__select-{{ ai_gen_id }} {
+    width: 100%;
+    padding: {{ block.settings.padding_vertical }}px {{ block.settings.padding_horizontal }}px;
+    font-size: {{ block.settings.font_size }}px;
+    color: {{ block.settings.text_color }};
+    background-color: {{ block.settings.background_color }};
+    border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    cursor: pointer;
+    appearance: none;
+    transition: all 0.3s ease;
+  }
+
+  .ai-size-dropdown__select-{{ ai_gen_id }}:hover {
+    background-color: #000000;
+    border-color: #000000;
+    color: #ffffff;
+  }
+
+  .ai-size-dropdown__select-{{ ai_gen_id }}:hover + .ai-size-dropdown__icon-{{ ai_gen_id }} {
+    color: #ffffff;
+  }
+
+  .ai-size-dropdown__select-{{ ai_gen_id }}:focus {
+    outline: 2px solid {{ block.settings.focus_color }};
+    outline-offset: 2px;
+  }
+
+  .ai-size-dropdown__icon-{{ ai_gen_id }} {
+    position: absolute;
+    right: {{ block.settings.padding_horizontal }}px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: {{ block.settings.text_color }};
+    width: 16px;
+    height: 16px;
+    transition: color 0.3s ease;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-size-dropdown-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<size-dropdown-{{ ai_gen_id }}
+  class="ai-size-dropdown-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  {% if block.settings.show_label %}
+    <label
+      for="size-select-{{ ai_gen_id }}"
+      class="ai-size-dropdown__label-{{ ai_gen_id }}"
+    >
+      {{ block.settings.label_text }}
+    </label>
+  {% endif %}
+
+  <div class="ai-size-dropdown__select-wrapper-{{ ai_gen_id }}">
+    <select
+      id="size-select-{{ ai_gen_id }}"
+      class="ai-size-dropdown__select-{{ ai_gen_id }}"
+      name="size"
+    >
+      <option value="">{{ block.settings.placeholder_text }}</option>
+      {% if product.options_with_values %}
+        {% for option in product.options_with_values %}
+          {% if option.name == 'Size' or option.name == 'size' %}
+            {% for value in option.values %}
+              <option value="{{ value | escape }}">{{ value }}</option>
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <option value="XS">XS</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+        <option value="XXL">XXL</option>
+      {% endif %}
+    </select>
+
+    <svg
+      class="ai-size-dropdown__icon-{{ ai_gen_id }}"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </div>
+</size-dropdown-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class SizeDropdown{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.select = this.querySelector('.ai-size-dropdown__select-{{ ai_gen_id }}');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        if (this.select) {
+          this.select.addEventListener('change', (event) => {
+            const selectedSize = event.target.value;
+            if (selectedSize) {
+              console.log('Selected size:', selectedSize);
+            }
+          });
+        }
+      }
+    }
+
+    customElements.define('size-dropdown-{{ ai_gen_id }}', SizeDropdown{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Size dropdown",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_label",
+      "label": "Show label",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label_text",
+      "label": "Label text",
+      "default": "Select size"
+    },
+    {
+      "type": "range",
+      "id": "label_font_size",
+      "label": "Label font size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Dropdown"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_text",
+      "label": "Placeholder text",
+      "default": "Choose a size"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#dfdfdf"
+    },
+    {
+      "type": "color",
+      "id": "focus_color",
+      "label": "Focus outline",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Size dropdown"
+    }
+  ]
+}
 {% endschema %}
