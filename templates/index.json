@@ -31,10 +31,53 @@
             "padding-inline-end": 0
           },
           "blocks": {}
+        },
+        "text_7DrYgi": {
+          "type": "text",
+          "name": "t:names.text",
+          "settings": {
+            "text": "<p>Find the ideal gift for your loved ones.</p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "button_Y449Nj": {
+          "type": "button",
+          "name": "t:names.button",
+          "settings": {
+            "label": "Choose Gift",
+            "link": "shopify://collections/all",
+            "open_in_new_tab": false,
+            "style_class": "button",
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fit-content",
+            "custom_width_mobile": 100
+          },
+          "blocks": {}
         }
       },
       "block_order": [
-        "logo_GKMRHN"
+        "logo_GKMRHN",
+        "text_7DrYgi",
+        "button_Y449Nj"
       ],
       "name": "t:names.custom_section",
       "settings": {
