@@ -181,12 +181,82 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {}
+                },
+                "ai_gen_block_ef5786b_9mcbzt": {
+                  "type": "ai_gen_block_ef5786b",
+                  "settings": {
+                    "label": "Select color",
+                    "label_size": 14,
+                    "label_font": "var(--font-body-family)",
+                    "label_color": "#000000",
+                    "swatch_size": 34,
+                    "swatch_spacing": 8,
+                    "swatch_border_radius": 30,
+                    "swatch_border_width": 1,
+                    "swatch_border_color": "#e6e6e6",
+                    "show_color_names": false,
+                    "desktop_width_percent": 100,
+                    "selected_border_width": 2,
+                    "selected_border_color": "#000000",
+                    "selected_ring_width": 2,
+                    "selected_ring_color": "#00000033",
+                    "show_checkmark": true,
+                    "checkmark_color": "#ffffff",
+                    "color_1_enabled": true,
+                    "color_1_value": "#000000",
+                    "color_1_name": "Black",
+                    "color_2_enabled": true,
+                    "color_2_value": "#ffffff",
+                    "color_2_name": "White",
+                    "color_3_enabled": true,
+                    "color_3_value": "#ff0000",
+                    "color_3_name": "Red",
+                    "color_4_enabled": true,
+                    "color_4_value": "#0000ff",
+                    "color_4_name": "Blue",
+                    "color_5_enabled": false,
+                    "color_5_value": "#00ff00",
+                    "color_5_name": "Green",
+                    "color_6_enabled": false,
+                    "color_6_value": "#ffff00",
+                    "color_6_name": "Yellow",
+                    "color_7_enabled": false,
+                    "color_7_value": "#ff00ff",
+                    "color_7_name": "Magenta",
+                    "color_8_enabled": false,
+                    "color_8_value": "#00ffff",
+                    "color_8_name": "Cyan"
+                  },
+                  "blocks": {}
+                },
+                "ai_gen_block_ad1aa76_e7nrMY": {
+                  "type": "ai_gen_block_ad1aa76",
+                  "settings": {
+                    "show_label": true,
+                    "label_text": "",
+                    "label_font_size": 14,
+                    "label_color": "#000000",
+                    "placeholder_text": "Choose a size",
+                    "font_size": 14,
+                    "padding_vertical": 12,
+                    "padding_horizontal": 16,
+                    "border_radius": 4,
+                    "border_width": 1,
+                    "desktop_width_percent": 100,
+                    "background_color": "#ffffff",
+                    "text_color": "#000000",
+                    "border_color": "#dfdfdf",
+                    "focus_color": "#000000"
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
                 "text_xrnftG",
                 "price_tVjtKg",
-                "text_GfUzBM"
+                "text_GfUzBM",
+                "ai_gen_block_ef5786b_9mcbzt",
+                "ai_gen_block_ad1aa76_e7nrMY"
               ]
             },
             "divider_VJhene": {
@@ -203,6 +273,7 @@
             },
             "variant_picker_R3rGDr": {
               "type": "variant-picker",
+              "disabled": true,
               "settings": {
                 "variant_style": "buttons",
                 "show_swatches": false,
