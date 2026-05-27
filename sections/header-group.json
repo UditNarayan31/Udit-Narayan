@@ -114,22 +114,10 @@
         "enable_transparent_header_collection": false,
         "collection_color_scheme": "default"
       }
-    },
-    "custom_liquid_3h4pGL": {
-      "type": "custom-liquid",
-      "name": "t:names.custom_liquid",
-      "settings": {
-        "custom_liquid": "Add banner",
-        "color_scheme": "",
-        "section_width": "page-width",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
     }
   },
   "order": [
     "header_announcements_9jGBFp",
-    "header_section",
-    "custom_liquid_3h4pGL"
+    "header_section"
   ]
 }
