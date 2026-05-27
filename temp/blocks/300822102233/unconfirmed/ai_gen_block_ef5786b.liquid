@@ -1,6 +1,520 @@
+{% doc %}
+  @prompt
+    add color options
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-color-options-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-color-options-container-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-color-options-label-{{ ai_gen_id }} {
+    font-family: {{ block.settings.label_font }};
+    font-size: {{ block.settings.label_size }}px;
+    color: {{ block.settings.label_color }};
+    margin: 0;
+  }
+
+  .ai-color-options-swatches-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: {{ block.settings.swatch_spacing }}px;
+  }
+
+  .ai-color-option-{{ ai_gen_id }} {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .ai-color-option-input-{{ ai_gen_id }} {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .ai-color-swatch-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.swatch_size }}px;
+    height: {{ block.settings.swatch_size }}px;
+    border-radius: {{ block.settings.swatch_border_radius }}px;
+    border: {{ block.settings.swatch_border_width }}px solid {{ block.settings.swatch_border_color }};
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .ai-color-option-input-{{ ai_gen_id }}:checked + .ai-color-swatch-{{ ai_gen_id }} {
+    border-color: {{ block.settings.selected_border_color }};
+    border-width: {{ block.settings.selected_border_width }}px;
+    box-shadow: 0 0 0 {{ block.settings.selected_ring_width }}px {{ block.settings.selected_ring_color }};
+  }
+
+  .ai-color-option-input-{{ ai_gen_id }}:checked + .ai-color-swatch-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background-color: {{ block.settings.checkmark_color }};
+    border-radius: 50%;
+    opacity: {{ block.settings.show_checkmark | times: 1 }};
+  }
+
+  .ai-color-option-{{ ai_gen_id }}:hover .ai-color-swatch-{{ ai_gen_id }} {
+    transform: scale(1.1);
+  }
+
+  .ai-color-option-{{ ai_gen_id }}:focus-within .ai-color-swatch-{{ ai_gen_id }} {
+    outline: 2px solid {{ block.settings.selected_border_color }};
+    outline-offset: 2px;
+  }
+
+  .ai-color-name-{{ ai_gen_id }} {
+    display: {{ block.settings.show_color_names | times: 1 | at_least: 0 | times: 1 | plus: 0 }};
+    font-size: 12px;
+    color: {{ block.settings.label_color }};
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  {% if block.settings.show_color_names %}
+    .ai-color-name-{{ ai_gen_id }} {
+      display: block;
+    }
+  {% else %}
+    .ai-color-name-{{ ai_gen_id }} {
+      display: none;
+    }
+  {% endif %}
+{% endstyle %}
+
+<color-options-{{ ai_gen_id }} class="ai-color-options-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-color-options-container-{{ ai_gen_id }}">
+    {% if block.settings.label != blank %}
+      <label class="ai-color-options-label-{{ ai_gen_id }}">{{ block.settings.label }}</label>
+    {% endif %}
+
+    <div class="ai-color-options-swatches-{{ ai_gen_id }}">
+      {% for i in (1..8) %}
+        {% liquid
+          assign color_enabled_key = 'color_' | append: i | append: '_enabled'
+          assign color_value_key = 'color_' | append: i | append: '_value'
+          assign color_name_key = 'color_' | append: i | append: '_name'
+          
+          assign color_enabled = block.settings[color_enabled_key]
+          assign color_value = block.settings[color_value_key]
+          assign color_name = block.settings[color_name_key]
+        %}
+
+        {% if color_enabled %}
+          <div class="ai-color-option-{{ ai_gen_id }}">
+            <input
+              type="radio"
+              name="color-{{ ai_gen_id }}"
+              id="color-{{ ai_gen_id }}-{{ i }}"
+              value="{{ color_name }}"
+              class="ai-color-option-input-{{ ai_gen_id }}"
+              {% if i == 1 %}checked{% endif %}
+            >
+            <label for="color-{{ ai_gen_id }}-{{ i }}">
+              <span
+                class="ai-color-swatch-{{ ai_gen_id }}"
+                style="background-color: {{ color_value }};"
+                aria-label="{{ color_name }}"
+              ></span>
+              {% if block.settings.show_color_names and color_name != blank %}
+                <span class="ai-color-name-{{ ai_gen_id }}">{{ color_name }}</span>
+              {% endif %}
+            </label>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</color-options-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ColorOptions{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.inputs = this.querySelectorAll('.ai-color-option-input-{{ ai_gen_id }}');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.inputs.forEach((input) => {
+          input.addEventListener('change', (event) => {
+            const selectedColor = event.target.value;
+            this.dispatchEvent(new CustomEvent('colorchange', {
+              detail: { color: selectedColor },
+              bubbles: true
+            }));
+          });
+        });
+      }
+    }
+
+    customElements.define('color-options-{{ ai_gen_id }}', ColorOptions{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Color options",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Label"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label text",
+      "default": "Select color"
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "label": "Label size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "label_font",
+      "label": "Label font",
+      "options": [
+        {
+          "value": "var(--font-body-family)",
+          "label": "Body"
+        },
+        {
+          "value": "var(--font-heading-family)",
+          "label": "Heading"
+        }
+      ],
+      "default": "var(--font-body-family)"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Swatches"
+    },
+    {
+      "type": "range",
+      "id": "swatch_size",
+      "label": "Swatch size",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "swatch_spacing",
+      "label": "Spacing",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "swatch_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "swatch_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "swatch_border_color",
+      "label": "Border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_color_names",
+      "label": "Show color names",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Selected state"
+    },
+    {
+      "type": "range",
+      "id": "selected_border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "selected_border_color",
+      "label": "Border color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "selected_ring_width",
+      "label": "Ring width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "selected_ring_color",
+      "label": "Ring color",
+      "default": "#00000033"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_checkmark",
+      "label": "Show checkmark",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "checkmark_color",
+      "label": "Checkmark color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Color 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "color_1_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "color_1_value",
+      "label": "Color",
+      "default": "#000000"
+    },
+    {
+      "type": "text",
+      "id": "color_1_name",
+      "label": "Name",
+      "default": "Black"
+    },
+    {
+      "type": "header",
+      "content": "Color 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "color_2_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "color_2_value",
+      "label": "Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "color_2_name",
+      "label": "Name",
+      "default": "White"
+    },
+    {
+      "type": "header",
+      "content": "Color 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "color_3_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "color_3_value",
+      "label": "Color",
+      "default": "#ff0000"
+    },
+    {
+      "type": "text",
+      "id": "color_3_name",
+      "label": "Name",
+      "default": "Red"
+    },
+    {
+      "type": "header",
+      "content": "Color 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "color_4_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "color_4_value",
+      "label": "Color",
+      "default": "#0000ff"
+    },
+    {
+      "type": "text",
+      "id": "color_4_name",
+      "label": "Name",
+      "default": "Blue"
+    },
+    {
+      "type": "header",
+      "content": "Color 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "color_5_enabled",
+      "label": "Enable",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "color_5_value",
+      "label": "Color",
+      "default": "#00ff00"
+    },
+    {
+      "type": "text",
+      "id": "color_5_name",
+      "label": "Name",
+      "default": "Green"
+    },
+    {
+      "type": "header",
+      "content": "Color 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "color_6_enabled",
+      "label": "Enable",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "color_6_value",
+      "label": "Color",
+      "default": "#ffff00"
+    },
+    {
+      "type": "text",
+      "id": "color_6_name",
+      "label": "Name",
+      "default": "Yellow"
+    },
+    {
+      "type": "header",
+      "content": "Color 7"
+    },
+    {
+      "type": "checkbox",
+      "id": "color_7_enabled",
+      "label": "Enable",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "color_7_value",
+      "label": "Color",
+      "default": "#ff00ff"
+    },
+    {
+      "type": "text",
+      "id": "color_7_name",
+      "label": "Name",
+      "default": "Magenta"
+    },
+    {
+      "type": "header",
+      "content": "Color 8"
+    },
+    {
+      "type": "checkbox",
+      "id": "color_8_enabled",
+      "label": "Enable",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "color_8_value",
+      "label": "Color",
+      "default": "#00ffff"
+    },
+    {
+      "type": "text",
+      "id": "color_8_name",
+      "label": "Name",
+      "default": "Cyan"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Color options"
+    }
+  ]
+}
 {% endschema %}
